@@ -1,0 +1,24 @@
+{
+  "name": "ssgm-memory",
+  "version": "1.0.0",
+  "description": "Training-free, browser-native implementation of the Stability & Safety Governed Memory (SSGM) framework (arXiv:2603.11768) — governance for evolving LLM-agent memory: decay, contradiction gating, provenance, drift bounding, reconciliation & rollback.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "serve": "node scripts/serve.js"
+  },
+  "keywords": [
+    "llm",
+    "agent",
+    "memory",
+    "governance",
+    "ssgm",
+    "semantic-drift",
+    "provenance"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vishalmysore/ssgmMemory.git"
+  }
+}

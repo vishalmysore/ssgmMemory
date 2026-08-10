@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ssgm-demo",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/serve.js"],
+      "port": 5178
+    }
+  ]
+}

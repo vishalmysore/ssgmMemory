@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SSGM — Stability &amp; Safety Governed Memory</title>
+  <meta name="description" content="Interactive, training-free implementation of the SSGM framework (arXiv:2603.11768) for governing evolving LLM-agent memory." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="top">
+    <h1>SSGM <span class="tag">arXiv:2603.11768</span></h1>
+    <p class="sub">
+      An interactive, <b>training-free</b> implementation of <b>Stability &amp; Safety Governed Memory</b> —
+      a governance layer that decouples memory evolution from execution. Every write passes a
+      contradiction gate against protected core facts <code>M_core</code>; every read is filtered by
+      access control, <code>Weibull</code> freshness and provenance; the mutable graph is bounded against an
+      immutable ledger <code>K_ledger</code> and can be rolled back. No model, no weights — pure logic.
+    </p>
+  </header>
+
+  <div class="controls">
+    <div class="inner">
+      <div class="clock">t = <b id="clock">0</b></div>
+      <button id="tick" class="primary">Advance time ▸ +10</button>
+      <button id="prune" class="ghost sm">Prune stale</button>
+      <label>θ_fresh <input id="theta" type="range" min="0.02" max="0.6" step="0.01" value="0.15" /><span class="val" id="thetaVal">0.15</span></label>
+      <label>η <input id="eta" type="range" min="8" max="80" step="1" value="30" /><span class="val" id="etaVal">30</span></label>
+      <label>κ <input id="kappa" type="range" min="0.5" max="4" step="0.1" value="1.2" /><span class="val" id="kappaVal">1.2</span></label>
+      <button id="reset" class="ghost sm danger">Reset scenario</button>
+    </div>
+  </div>
+
+  <main>
+    <!-- Active graph -->
+    <section class="panel wide" id="p-active">
+      <h2>Mutable Active Graph <span class="eq">M_t — fast reasoning surface</span></h2>
+      <p class="hint">Live view of admitted memory. Freshness <code>w(Δτ)=exp(−(Δτ/η)^κ)</code> decays as time advances; successful retrieval resets it. Core facts never decay.</p>
+      <table>
+        <thead>
+          <tr><th>Fact key</th><th>Statement</th><th>Source</th><th>Scope</th><th>Freshness w</th><th></th></tr>
+        </thead>
+        <tbody id="activeBody"></tbody>
+      </table>
+    </section>
+
+    <!-- Write gate -->
+    <section class="panel" id="p-write">
+      <h2>Write Validation Gate <span class="eq">𝒢_write : ΔM ∧ M_core ⊧ ⊥ → reject</span></h2>
+      <p class="hint">Propose a memory delta. It is admitted only if it does not contradict a protected core fact; a clash with a mutable fact supersedes the stale one.</p>
+      <form class="grid" id="writeForm">
+        <input name="subject" placeholder="subject (e.g. p:allergy)" required />
+        <input name="predicate" placeholder="predicate (e.g. has)" />
+        <input name="value" placeholder="value (e.g. penicillin)" />
+        <select name="source">
+          <option value="clinician">source: clinician</option>
+          <option value="user">source: user</option>
+          <option value="agent-summary">source: agent-summary</option>
+          <option value="verified-tool">source: verified-tool</option>
+          <option value="external-web">source: external-web (untrusted)</option>
+        </select>
+        <input class="full" name="text" placeholder="natural-language statement" required />
+        <select name="scope">
+          <option value="*">scope: * (world-readable)</option>
+          <option value="doctor">scope: doctor only</option>
+          <option value="nurse">scope: nurse only</option>
+        </select>
+        <button class="primary" type="submit">Run write gate ▸</button>
+      </form>
+      <div class="presets">
+        <button class="sm" data-preset="benign">＋ benign update</button>
+        <button class="sm" data-preset="halluc">☣ hallucinate: "no allergies"</button>
+        <button class="sm" data-preset="supersede">↻ new address</button>
+        <button class="sm" data-preset="inject">🩸 inject adversarial (bypass write)</button>
+      </div>
+      <div class="banner" id="writeBanner"></div>
+    </section>
+
+    <!-- Decay -->
+    <section class="panel" id="p-decay">
+      <h2>Temporal Decay <span class="eq">w(Δτ) = exp(−(Δτ/η)^κ)</span></h2>
+      <p class="hint">Weibull freshness survival curve. Dashed line = θ_fresh pruning threshold. Adjust η / κ above.</p>
+      <svg class="decay" id="decaySvg" viewBox="0 0 480 190" preserveAspectRatio="none"></svg>
+    </section>
+
+    <!-- Read gate -->
+    <section class="panel wide" id="p-read">
+      <h2>Read Filtering Gate <span class="eq">C_t = { μ ∈ TopK | ACL ∧ w≥θ ∧ prov }</span></h2>
+      <p class="hint">Constrained retrieval. Candidates must pass access control, freshness and a trusted provenance signature before they reach the agent context.</p>
+      <form class="grid" id="readForm" style="grid-template-columns: 2fr 1fr 1fr auto;">
+        <input name="query" placeholder="query (e.g. allergy medication diet)" value="allergy medication diet" />
+        <select name="uid">
+          <option value="doctor">requester: doctor</option>
+          <option value="nurse">requester: nurse</option>
+          <option value="intern">requester: intern</option>
+        </select>
+        <span></span>
+        <button class="primary" type="submit">Retrieve ▸</button>
+      </form>
+      <div class="retrieve-cols">
+        <div>
+          <div class="col-title">✔ Admitted to context</div>
+          <ul class="rlist admit" id="admitList"></ul>
+        </div>
+        <div>
+          <div class="col-title">✕ Filtered out (with reason)</div>
+          <ul class="rlist reject" id="rejectList"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Drift & reconcile -->
+    <section class="panel" id="p-drift">
+      <h2>Semantic Drift &amp; Reconciliation <span class="eq">δ = 1 − sim(E(M_T), E(K_true))</span></h2>
+      <p class="hint">Lossy re-summarization corrupts the mutable graph while the ledger stays intact — so drift becomes measurable, and reconciliation repairs it.</p>
+      <div class="gauge">
+        <div class="ringwrap">
+          <div class="ring" id="driftRing"><span class="lbl" id="driftLbl">0.00</span></div>
+        </div>
+        <div class="desc" id="driftDesc">Mutable graph is faithful to the immutable ledger.</div>
+      </div>
+      <div class="presets" style="margin-top:14px;">
+        <button class="sm danger" id="corrupt">☣ Re-summarize (introduce drift)</button>
+        <button class="sm primary" id="reconcile">↺ Reconcile to ledger</button>
+      </div>
+      <div class="banner" id="driftBanner"></div>
+    </section>
+
+    <!-- Ledger -->
+    <section class="panel wide" id="p-ledger">
+      <h2>Immutable Episodic Log <span class="eq">K_ledger — append-only source of truth</span></h2>
+      <p class="hint">Every governed operation is recorded here. Click any row to <b>roll back</b> the mutable graph to that point.</p>
+      <div class="ledger">
+        <table>
+          <thead><tr><th>seq</th><th>t</th><th>type</th><th>detail</th></tr></thead>
+          <tbody id="ledgerBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="foot">
+    Reference implementation of <b>“Governing Evolving Memory in LLM Agents: Risks, Mechanisms, and the SSGM Framework”</b>
+    (Lam, Li, Zhang &amp; Zhao, <a href="https://arxiv.org/abs/2603.11768">arXiv:2603.11768</a>).
+    Engine: <code>src/ssgm/</code> · Tests: <code>node --test</code> · MIT.
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
