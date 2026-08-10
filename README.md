@@ -74,6 +74,16 @@ test/             node --test governance suite
 docs/             article + screenshots
 ```
 
+## Conclusion
+
+SSGM reframes agent memory safety as an **engineering-governance** problem, not a modelling one. This project shows the whole framework runs in a browser tab with no training, no model weights, and no dependencies, and that every safeguard — decay, the write/read gates, provenance, drift bounding, reconciliation and rollback — is independently tested and observable in the live demo. It's meant to be adopted incrementally, as a layer wrapped around an existing key/value memory store.
+
+## Disclaimer
+
+This repository is **my own interpretation** of the SSGM paper, built to understand it by implementing it. I have tried to stay as faithful as possible to the concepts, formulas, and architecture described by the authors. Where the paper is conceptual I made concrete engineering choices to make it runnable — e.g. a bag-of-terms projection instead of a learned embedding model for `E(·)`, an FNV keyed digest instead of real asymmetric cryptography for the provenance signature `σ(μ)`, and a lexical + structured contradiction check instead of a full NLI / Truth-Maintenance engine.
+
+**All credit for the ideas and innovation goes to the authors of the paper — Chingkwun Lam, Jiaxin Li, Lingfei Zhang, and Kuo Zhao ([arXiv:2603.11768](https://arxiv.org/abs/2603.11768)).** Any errors or misreadings in this interpretation are entirely mine.
+
 ## License
 
 MIT

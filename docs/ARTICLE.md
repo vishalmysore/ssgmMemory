@@ -180,4 +180,18 @@ The engine is dependency-free ES modules — the same files run under Node's tes
 
 The interesting claim in SSGM is that most memory-safety problems in agents are **governance** problems, not capability problems. You don't need a smarter model to stop it consolidating a hallucination over a known allergy, to keep a private note out of the wrong retrieval, or to undo a week of drifted summaries — you need a gate, a decay clock, a signature, and an immutable log. All four are a few hundred lines of deterministic logic, and they are in this repository.
 
+---
+
+## Conclusion
+
+SSGM makes a quietly radical argument: the reliability of an agent's long-term memory is an **engineering-governance** discipline, not a modelling one. Rather than trusting a bigger model to remember better, you wrap the ordinary store in a few independent, verifiable safeguards — decay, a contradiction gate, provenance, a drift bound, and an immutable ledger you can roll back to — and each one is small, deterministic, and testable in isolation.
+
+This project set out to show that the framework is not just conceptual: the entire pipeline runs **in a browser tab, with no training, no model weights, and no dependencies**, and every mechanism is both unit-tested and observable live in the demo. If that holds up, memory governance is something any agent builder can adopt today, incrementally, as a layer around an existing key/value store — which is exactly how it slots into a keyword-retrieval memory like the one in the harness-engineering demo.
+
+## Disclaimer
+
+This repository is **my own interpretation** of the SSGM paper, built to understand it by implementing it. I have tried to stay as faithful as I could to the concepts, formulas, and architecture the authors describe, but the paper is deliberately conceptual, so I made concrete engineering choices to make it runnable — for example: a **bag-of-terms** projection in place of a learned embedding model for `E(·)`, an **FNV keyed digest** in place of real asymmetric cryptography for the provenance signature `σ(μ)`, and a **lexical + structured** contradiction check in place of a full NLI / Truth-Maintenance engine. These are simplifications of my choosing, not prescriptions from the paper.
+
+**All credit for the ideas and the innovation belongs to the paper's authors — Chingkwun Lam, Jiaxin Li, Lingfei Zhang, and Kuo Zhao.** Any errors, simplifications, or misreadings in this implementation are entirely mine. If something here misrepresents the paper, trust the paper, not my code.
+
 *Reference: Lam, Li, Zhang & Zhao, "Governing Evolving Memory in LLM Agents: Risks, Mechanisms, and the SSGM Framework," [arXiv:2603.11768](https://arxiv.org/abs/2603.11768).*
