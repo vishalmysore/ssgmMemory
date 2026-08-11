@@ -2,6 +2,10 @@
 
 *A training-free, browser-native reference implementation of User as Code (arXiv:2606.16707), and a companion to the [SSGM demo](ARTICLE.md).*
 
+![The full User-as-Code demo — fact log, compiled user, executable rules, and query](screenshots/uac-01-overview.png)
+
+> **At a glance** — the user is compiled from a raw fact log into a **typed program**: structured state plus functions. That lets the agent *compute* over the whole history (exact sums, dedup, safety rules) instead of retrieving loose snippets. Everything below runs live in the browser with **no model and no dependencies** — the rules and queries you see execute the JavaScript in [`src/uac/`](../src/uac/).
+
 ---
 
 ## The problem: "bag of facts" memory can't compute
@@ -27,9 +31,7 @@ This repository implements that, training-free, as a page you can play with. The
 
 ## Phase 1 + 2: from a raw log to a compiled user
 
-![User as Code — overview](screenshots/uac-01-overview.png)
-
-On the left, raw utterances stream into the **append-only fact log** (`"bought a coffee, $4.50"`, `"I'm going vegetarian"`, `"started warfarin"`). On the right, **Compile checkpoint** folds that log into typed state, rendered as source — the user *literally is* a small typed program:
+Look back at the two left/right panels in the screenshot above. On the left, raw utterances stream into the **append-only fact log** (`"bought a coffee, $4.50"`, `"I'm going vegetarian"`, `"started warfarin"`). On the right, **Compile checkpoint** folds that log into typed state, rendered as source — the user *literally is* a small typed program:
 
 ```python
 @dataclass
