@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chain-of-Memory — Lightweight Construction, Sophisticated Utilization</title>
+  <meta name="description" content="Interactive, training-free implementation of Chain-of-Memory (arXiv:2601.14287): link retrieved fragments into an ordered multi-hop reasoning chain instead of naive Top-K." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <nav class="tabs">
+    <span class="brand">agent-memory papers ▸</span>
+    <a href="./index.html">SSGM <span class="paper">2603.11768</span></a>
+    <a href="./userascode.html">User as Code <span class="paper">2606.16707</span></a>
+    <a class="active" href="./chainofmemory.html">Chain-of-Memory <span class="paper">2601.14287</span></a>
+  </nav>
+
+  <header class="top">
+    <h1>Chain-of-Memory <span class="tag">arXiv:2601.14287</span></h1>
+    <p class="sub">
+      An interactive, <b>training-free</b> implementation of <b>Chain-of-Memory (CoM)</b> —
+      <b>lightweight construction paired with sophisticated utilization</b>. Memory is stored as cheap
+      distilled units; at query time, instead of dumping the Top-K matches, CoM links fragments into an
+      <b>ordered multi-hop reasoning chain</b>, recovering the <span style="color:var(--core)">bridge</span>
+      fragments a query-only search misses. The chain drives <code>dynamic evolution</code> and
+      <code>adaptive truncation</code> to keep memory bounded.
+    </p>
+  </header>
+
+  <div class="controls">
+    <div class="inner">
+      <div class="clock">t = <b id="clock">0</b></div>
+      <div class="checkpoint-badge">units: <b id="count">0</b> / cap <b id="cap">12</b></div>
+      <label>capacity <input id="capacity" type="range" min="4" max="14" step="1" value="12" /><span class="val" id="capVal">12</span></label>
+      <button id="consolidate" class="ghost sm">Adaptive-truncate ▸</button>
+      <button id="reset" class="ghost sm danger">Reset</button>
+    </div>
+  </div>
+
+  <main>
+    <!-- Query + chain vs naive -->
+    <section class="panel wide" id="p-query">
+      <h2>Utilization · Chain vs Top-K <span class="eq">link fragments into an inference pathway</span></h2>
+      <p class="hint">Ask a multi-hop question. The chain seeds at the most query-relevant unit, then hops by <i>connection strength</i> — surfacing bridges whose words don't match the query.</p>
+      <form class="grid" id="queryForm" style="grid-template-columns: 1fr auto;">
+        <input name="q" placeholder="e.g. is my trip safe given my heart health?" value="is my trip safe given my heart health?" />
+        <button class="primary" type="submit">Build chain ▸</button>
+      </form>
+      <div class="presets">
+        <button class="sm" data-q="is my trip safe given my heart health?">trip + heart safety</button>
+        <button class="sm" data-q="any risk with my medication on the trip?">medication risk</button>
+        <button class="sm" data-q="what should I know about the weather there?">weather</button>
+      </div>
+      <div class="vs" style="grid-template-columns: 1.15fr 0.85fr;">
+        <div class="card uac" style="border-left-color: var(--good);">
+          <h3>⛓ Chain-of-Memory (ordered pathway)</h3>
+          <div class="chain-path" id="chainPath"></div>
+        </div>
+        <div class="card rag">
+          <h3>⌕ Naive Top-K (unordered bag)</h3>
+          <div class="bag" id="naiveBag"></div>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><div class="n core" id="bridgeN">0</div><div class="l">bridge fragments recovered only by the chain</div></div>
+        <div class="stat"><div class="n good" id="hopN">0</div><div class="l">hops in the reasoning pathway</div></div>
+        <div class="stat"><div class="n" id="stopBy">—</div><div class="l">chain terminated by</div></div>
+      </div>
+      <div class="cite">
+        <b>Reported in the paper:</b> CoM improves accuracy by <b>7.5–10.4%</b> over strong baselines while using
+        ≈ <b>2.7%</b> of the tokens and <b>6.0%</b> of the latency of heavy graph-memory construction — lightweight to build, sophisticated to use.
+      </div>
+    </section>
+
+    <!-- Memory store -->
+    <section class="panel wide" id="p-store">
+      <h2>Lightweight Memory Store <span class="eq">distilled units + cheap metadata</span></h2>
+      <p class="hint">Each interaction is distilled into a small unit (content + tags + importance). The chain <b>reinforces</b> traversed units (access ↑, importance ↑); adaptive truncation prunes the lowest <code>importance × recency × log(access)</code> when over capacity.</p>
+      <form class="grid" id="addForm" style="grid-template-columns: 1fr auto auto;">
+        <input name="content" placeholder="distilled memory, e.g. 'User is flying to Denver next week'" />
+        <input name="tags" placeholder="tags (space-sep)" style="max-width:180px;" />
+        <button class="primary" type="submit">Remember ▸</button>
+      </form>
+      <div class="mem-grid" id="storeBody" style="margin-top:12px;"></div>
+    </section>
+  </main>
+
+  <div class="foot">
+    Reference implementation of <b>“Chain-of-Memory: Lightweight Memory Construction with Dynamic Evolution for LLM Agents”</b>
+    (Xu, Xu, Tian, Huang, Chen, Li &amp; Shen, <a href="https://arxiv.org/abs/2601.14287">arXiv:2601.14287</a>).
+    Engine: <code>src/com/</code> · Tests: <code>node --test</code> · MIT.
+    Companion to <a href="./index.html">SSGM</a> and <a href="./userascode.html">User as Code</a>.
+  </div>
+
+  <script type="module" src="./chainofmemory.js"></script>
+</body>
+</html>

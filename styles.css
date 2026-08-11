@@ -277,6 +277,60 @@ pre.code u { color: var(--accent); text-decoration: none; }
 .checkpoint-badge { font-family: var(--mono); font-size: 12px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); }
 .checkpoint-badge b { color: var(--warn); }
 
+/* ── Chain-of-Memory page ── */
+.mem-grid { display: flex; flex-direction: column; gap: 8px; }
+.mem-unit {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 9px 11px;
+  background: var(--panel-2);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 12px;
+  align-items: center;
+  font-size: 12.5px;
+}
+.mem-unit.pruned { opacity: .35; }
+.mem-unit .content { min-width: 0; }
+.mem-unit .tags { font-family: var(--mono); font-size: 10.5px; color: var(--accent); margin-top: 2px; }
+.mem-unit .metrics { display: flex; gap: 10px; font-family: var(--mono); font-size: 10.5px; color: var(--muted); text-align: right; white-space: nowrap; }
+.mem-unit .metrics b { color: var(--ink); }
+.mem-unit .sbar { height: 5px; width: 60px; background: #1b2536; border-radius: 3px; overflow: hidden; margin-top: 3px; }
+.mem-unit .sbar > div { height: 100%; background: linear-gradient(90deg, var(--warn), var(--good)); }
+
+.chain-path { display: flex; flex-direction: column; gap: 0; margin-top: 8px; }
+.chain-hop {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--good);
+  border-radius: 9px;
+  padding: 9px 12px;
+  background: linear-gradient(90deg, #0f2a1f33, var(--panel-2));
+  font-size: 12.5px;
+  position: relative;
+}
+.chain-hop.seed { border-left-color: var(--accent); background: linear-gradient(90deg, #16324f44, var(--panel-2)); }
+.chain-hop.bridge { border-left-color: var(--core); background: linear-gradient(90deg, #1b143044, var(--panel-2)); }
+.chain-hop .role { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.chain-hop.seed .role { color: var(--accent); }
+.chain-hop.bridge .role { color: var(--core); }
+.chain-connector { display: flex; align-items: center; gap: 8px; padding: 3px 0 3px 14px; color: var(--muted); font-family: var(--mono); font-size: 10.5px; }
+.chain-connector .arrow { color: var(--good); font-size: 14px; }
+.bag { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
+.bag .chip { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--panel-2); font-size: 12px; max-width: 100%; }
+.bag .chip .s { font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+
+.stat-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+.stat {
+  border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; background: var(--panel-2); flex: 1; min-width: 120px;
+}
+.stat .n { font-family: var(--mono); font-size: 20px; }
+.stat .n.good { color: var(--good); }
+.stat .n.warn { color: var(--warn); }
+.stat .n.core { color: var(--core); }
+.stat .l { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.cite { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 9px; padding: 10px 13px; background: var(--panel-2); font-size: 12px; color: var(--muted); margin-top: 12px; }
+.cite b { color: var(--ink); }
+
 @media (max-width: 900px) {
   main { grid-template-columns: 1fr; }
   .retrieve-cols { grid-template-columns: 1fr; }

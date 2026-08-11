@@ -96,14 +96,15 @@ npm run serve      # http://localhost:5178/userascode.html
 
 ---
 
-## Two views of the same shift
+## Three views of the same shift
 
-SSGM and UaC attack agent memory from opposite ends, and this repo hosts both as tabs:
+This repo hosts three agent-memory papers as tabs, attacking the problem from different ends:
 
 - **[SSGM](ARTICLE.md)** governs *how memory changes over time* — decay, contradiction gates, provenance, drift bounding, rollback.
 - **User as Code** changes *what memory is* — from a bag of facts you retrieve into a typed program you execute.
+- **[Chain-of-Memory](CHAIN_OF_MEMORY.md)** changes *how you read memory back* — an ordered multi-hop reasoning chain instead of a Top-K dump.
 
-Put together, they sketch the same future: an agent's memory as governed, executable, auditable software rather than an ever-growing pile of text.
+Put together, they sketch the same future: an agent's memory as governed, executable, traversable software rather than an ever-growing pile of text.
 
 ## Disclaimer
 
