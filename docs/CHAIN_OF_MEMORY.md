@@ -2,6 +2,10 @@
 
 *A training-free, browser-native reference implementation of Chain-of-Memory (arXiv:2601.14287), and the third tab alongside [SSGM](ARTICLE.md) and [User as Code](USER_AS_CODE.md).*
 
+![The full Chain-of-Memory demo — an ordered reasoning chain beside the naive Top-K bag, over a lightweight memory store](screenshots/com-01-chain-vs-topk.png)
+
+> **At a glance** — retrieval finds facts; it doesn't connect them. Chain-of-Memory stores memory cheaply, then at query time links the fragments into an **ordered multi-hop chain** — recovering the *bridge* facts (whose words don't match your question) that a Top-K search drops. The chain reinforces what it uses and prunes the rest, keeping memory bounded. It runs live in the browser with **no model and no dependencies** ([`src/com/`](../src/com/)).
+
 ---
 
 ## The problem: retrieval recalls, but reasoning needs a path
@@ -26,9 +30,7 @@ Chain-of-Memory — *"Lightweight Memory Construction with Dynamic Evolution for
 
 ## Utilization: chain vs. Top-K, side by side
 
-![Chain-of-Memory vs naive Top-K](screenshots/com-01-chain-vs-topk.png)
-
-The demo asks *"is my trip safe given my heart health?"* over a store of distilled memories and answers it two ways.
+In the screenshot above, the demo asks *"is my trip safe given my heart health?"* over a store of distilled memories and answers it two ways.
 
 **Naive Top-K (right)** ranks units by similarity to the *query* and returns three: the heart condition, "altitude worsens heart", and "flying to Denver". It never surfaces *"Denver sits at 5,280 ft"* — that fact isn't similar to the question, so the altitude bridge is invisible.
 
