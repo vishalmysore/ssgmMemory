@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>User as Code — Executable Memory for Personalized Agents</title>
+  <meta name="description" content="Interactive, training-free implementation of User as Code (arXiv:2606.16707): compile a user's fact log into typed state + executable rules." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <nav class="tabs">
+    <span class="brand">agent-memory papers ▸</span>
+    <a href="./index.html">SSGM <span class="paper">2603.11768</span></a>
+    <a class="active" href="./userascode.html">User as Code <span class="paper">2606.16707</span></a>
+  </nav>
+
+  <header class="top">
+    <h1>User as Code <span class="tag">arXiv:2606.16707</span></h1>
+    <p class="sub">
+      An interactive, <b>training-free</b> implementation of <b>User as Code (UaC)</b> — instead of a
+      "bag of facts" you retrieve over, the agent's model of a user is a <b>living software project</b>:
+      an append-only fact log is periodically <b>compiled</b> into <code>typed state + executable rules</code>.
+      Rules fire deterministically on change (drug–allergy safety), and questions are <b>executed</b> over the
+      whole history — so aggregation is exact, where retrieval can only recall snippets.
+    </p>
+  </header>
+
+  <div class="controls">
+    <div class="inner">
+      <div class="clock">t = <b id="clock">0</b></div>
+      <div class="checkpoint-badge">pending facts: <b id="pending">0</b></div>
+      <button id="checkpoint" class="primary">⟳ Compile checkpoint</button>
+      <button id="reset" class="ghost sm danger">Reset user</button>
+    </div>
+  </div>
+
+  <main>
+    <!-- Phase 1: append-only fact log -->
+    <section class="panel" id="p-log">
+      <h2>Phase 1 · Append-only Fact Log <span class="eq">capture everything, discard nothing</span></h2>
+      <p class="hint">Raw observations stream in as the agent talks to the user. Nothing is overwritten — even contradictions are kept, to be resolved later <i>in code</i>.</p>
+      <form class="grid" id="factForm" style="grid-template-columns: 1fr auto;">
+        <input name="utterance" placeholder='e.g. "bought coffee 4.50", "allergic to penicillin", "start amoxicillin 500mg"' />
+        <button class="primary" type="submit">Append ▸</button>
+      </form>
+      <div class="presets">
+        <button class="sm" data-fact="allergy">＋ allergy: penicillin</button>
+        <button class="sm" data-fact="amoxicillin">＋ start amoxicillin</button>
+        <button class="sm" data-fact="warfarin">＋ start warfarin</button>
+        <button class="sm" data-fact="ibuprofen">＋ start ibuprofen</button>
+        <button class="sm" data-fact="coffee">＋ buy coffee</button>
+        <button class="sm" data-fact="budget">＋ set coffee budget $20</button>
+        <button class="sm" data-fact="veg">＋ go vegetarian</button>
+        <button class="sm" data-fact="steak">＋ buy steak</button>
+      </div>
+      <div class="log-stream" style="margin-top:12px;">
+        <table>
+          <thead><tr><th>t</th><th>kind</th><th>observation</th></tr></thead>
+          <tbody id="logBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Phase 2: compiled user (code) -->
+    <section class="panel" id="p-code">
+      <h2>Phase 2 · Compiled User <span class="eq">the user IS a typed program</span></h2>
+      <p class="hint">Checkpoint folds the log into typed state. The paper uses Python; the live rules &amp; queries here execute the equivalent JS in <code>src/uac/</code>.</p>
+      <pre class="code" id="codeView"></pre>
+    </section>
+
+    <!-- Executable rules -->
+    <section class="panel" id="p-rules">
+      <h2>Executable Rules · Proactive Alerts <span class="eq">deterministic, run on state change</span></h2>
+      <p class="hint">Ordinary functions compute over the whole record and fire automatically — the safety check a retrieval system can't reliably make.</p>
+      <ul class="alerts" id="alertList"></ul>
+    </section>
+
+    <!-- Query: UaC vs retrieval -->
+    <section class="panel" id="p-query">
+      <h2>Query · Execute vs Retrieve <span class="eq">computation over history</span></h2>
+      <p class="hint">Ask a question that needs aggregation. UaC runs a function over typed state (exact); the bag-of-facts baseline can only recall Top-K snippets.</p>
+      <form class="grid" id="queryForm" style="grid-template-columns: 1fr auto;">
+        <input name="q" placeholder="e.g. how much did I spend on coffee?" value="how much did I spend on coffee?" />
+        <button class="primary" type="submit">Ask ▸</button>
+      </form>
+      <div class="presets">
+        <button class="sm" data-q="how much did I spend on coffee?">spend on coffee?</button>
+        <button class="sm" data-q="how many times did I buy coffee?">how many coffees?</button>
+        <button class="sm" data-q="what medications am I taking?">current meds?</button>
+        <button class="sm" data-q="what am I allergic to?">allergies?</button>
+      </div>
+      <div class="vs">
+        <div class="card uac">
+          <h3>▶ User as Code (executed)</h3>
+          <div class="ans" id="uacAns">—</div>
+          <div class="meta" id="uacMeta"></div>
+        </div>
+        <div class="card rag">
+          <h3>⌕ Bag-of-facts retrieval (Top-3)</h3>
+          <div class="ans" id="ragAns">—</div>
+          <ul class="snips" id="ragSnips"></ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="foot">
+    Reference implementation of <b>“User as Code: Executable Memory for Personalized Agents”</b>
+    (Bojie Li, <a href="https://arxiv.org/abs/2606.16707">arXiv:2606.16707</a>).
+    Engine: <code>src/uac/</code> · Tests: <code>node --test</code> · MIT.
+    A companion to the <a href="./index.html">SSGM</a> demo.
+  </div>
+
+  <script type="module" src="./userascode.js"></script>
+</body>
+</html>

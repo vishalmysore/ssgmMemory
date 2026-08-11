@@ -1,15 +1,24 @@
-# SSGM — Stability & Safety Governed Memory
+# Agent-Memory Papers — interactive, training-free implementations
 
-A **training-free, browser-native** reference implementation of the SSGM framework from
-**"Governing Evolving Memory in LLM Agents: Risks, Mechanisms, and the Stability and Safety
-Governed Memory Framework"** (Lam, Li, Zhang & Zhao, [arXiv:2603.11768](https://arxiv.org/abs/2603.11768)).
+Two **training-free, browser-native** reference implementations of recent LLM-agent **memory** papers,
+served as two tabs of one site. No model, no build step, no dependencies — pure deterministic logic you
+can click through.
+
+| Tab | Paper | What it shows |
+|---|---|---|
+| **[SSGM](index.html)** | Governing Evolving Memory in LLM Agents ([2603.11768](https://arxiv.org/abs/2603.11768)) | governs *how memory changes*: decay, contradiction gates, provenance, drift bounding, rollback |
+| **[User as Code](userascode.html)** | User as Code: Executable Memory for Personalized Agents ([2606.16707](https://arxiv.org/abs/2606.16707)) | changes *what memory is*: from a bag of facts you retrieve into a typed program you execute |
+
+> 📖 Write-ups with screenshots: **[SSGM →](docs/ARTICLE.md)** · **[User as Code →](docs/USER_AS_CODE.md)**
+> 🕹️ **Run it:** `npm run serve` → http://localhost:5178 (SSGM) and `/userascode.html`
+
+---
+
+## SSGM — Stability & Safety Governed Memory
 
 SSGM is a **governance layer**, not a model. It decouples memory *evolution* from *execution* so that
 an LLM agent's long-lived memory cannot silently corrupt itself. Zero training — pure deterministic
 logic layered over an ordinary key/value store.
-
-> 📖 **[Read the full write-up with screenshots →](docs/ARTICLE.md)**
-> 🕹️ **Live demo:** open `index.html`, or `npm run serve` → http://localhost:5178
 
 ![overview](docs/screenshots/01-overview.png)
 
@@ -72,6 +81,25 @@ index.html        interactive demo (also deployed via GitHub Pages)
 app.js            demo wiring
 test/             node --test governance suite
 docs/             article + screenshots
+```
+
+## User as Code — Executable Memory
+
+Instead of a "bag of facts" you retrieve over, the agent's model of a user is a **living software
+project**: an append-only fact log is periodically **compiled** into typed state + executable rules.
+Rules fire deterministically on change (drug–allergy safety), and questions are **executed** over the
+whole history — so aggregation is exact where retrieval can only recall Top-K snippets (the paper: ~99%
+vs 6–43% on computation-over-history).
+
+![user as code](docs/screenshots/uac-03-query-vs-retrieval.png)
+
+```
+src/uac/          dependency-free ESM executable-memory engine
+  core.js         UaCMemory: append-only log + checkpoint→typed User state
+  rules.js        executable rules (drug-allergy, interaction, budget, diet)
+  query.js        aggregation (executed, exact) vs bag-of-facts retrieval (Top-K)
+  codegen.js      render the compiled user as source
+userascode.html   interactive demo   ·   userascode.js   demo wiring
 ```
 
 ## Conclusion
