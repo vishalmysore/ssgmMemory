@@ -10,7 +10,8 @@ can click through.
 | **[User as Code](userascode.html)** | User as Code: Executable Memory for Personalized Agents ([2606.16707](https://arxiv.org/abs/2606.16707)) | changes *what memory is*: from a bag of facts you retrieve into a typed program you execute |
 | **[Chain-of-Memory](chainofmemory.html)** | Chain-of-Memory: Lightweight Memory Construction with Dynamic Evolution ([2601.14287](https://arxiv.org/abs/2601.14287)) | changes *how you read memory back*: an ordered multi-hop reasoning chain, not a Top-K dump |
 
-> 📖 Write-ups with screenshots: **[SSGM →](docs/ARTICLE.md)** · **[User as Code →](docs/USER_AS_CODE.md)** · **[Chain-of-Memory →](docs/CHAIN_OF_MEMORY.md)**
+> 🧭 **Start here:** **[The Agent-Memory Stack — all three papers, one lifecycle →](docs/THE_AGENT_MEMORY_STACK.md)**
+> 📖 Individual write-ups with screenshots: **[SSGM →](docs/ARTICLE.md)** · **[User as Code →](docs/USER_AS_CODE.md)** · **[Chain-of-Memory →](docs/CHAIN_OF_MEMORY.md)**
 > 🕹️ **Run it:** `npm run serve` → http://localhost:5178 — `/`, `/userascode.html`, `/chainofmemory.html`
 
 ---
